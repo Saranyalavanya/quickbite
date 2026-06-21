@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart';
+import 'login_screen.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -13,6 +14,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // wait 3 seconds, then move to next screen
     Future.delayed(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginScreen()),
+  );
       // we will add navigation to Login Screen here once it's ready
     });
   }
