@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'cart_provider.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -48,7 +49,7 @@ class CartScreen extends StatelessWidget {
                               item.food.imageUrl,
                               width: 60,
                               height: 60,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
                                   width: 60,
@@ -135,7 +136,10 @@ class CartScreen extends StatelessWidget {
                         minimumSize: const Size(double.infinity, 0),
                       ),
                       onPressed: () {
-                        // checkout navigation will go here later
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const CheckoutScreen()),
+                        );
                       },
                       child: const Text('Proceed to Checkout',
                           style:

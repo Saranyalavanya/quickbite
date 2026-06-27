@@ -8,10 +8,59 @@ class CartItem {
   CartItem({required this.food, this.quantity = 1});
 }
 
+class PlacedOrder {
+  final String orderId;
+  final String userEmail;
+  final List<CartItem> items;
+  final double total;
+  final String paymentMethod;
+  final DateTime orderDate;
+
+  PlacedOrder({
+    required this.orderId,
+    required this.userEmail,
+    required this.items,
+    required this.total,
+    required this.paymentMethod,
+    required this.orderDate,
+  });
+
+  String get status {
+    final minutesPassed = DateTime.now().difference(orderDate).inMinutes;
+    if (minutesPassed < 1) return 'Order Placed';
+    if (minutesPassed < 2) return 'Preparing';
+    if (minutesPassed < 3) return 'Out for Delivery';
+    return 'Delivered';
+  }
+}
+
+
 class CartProvider extends ChangeNotifier {
   final List<CartItem> _items = [];
+  final List<PlacedOrder> _orderHistory = [];
+
 
   List<CartItem> get items => _items;
+  List<PlacedOrder> get orderHistory => _orderHistory;
+
+  void placeOrder(String paymentMethod, String userEmail) {
+  final newOrderId = 'QB${DateTime.now().millisecondsSinceEpoch}';
+  _orderHistory.add(
+    PlacedOrder(
+      orderId: newOrderId,
+      userEmail: userEmail,
+      items: List.from(_items),
+      total: totalPrice,
+      paymentMethod: paymentMethod,
+      orderDate: DateTime.now(),
+    ),
+  );
+  notifyListeners();
+}
+
+List<PlacedOrder> ordersForUser(String email) {
+  return _orderHistory.where((order) => order.userEmail == email).toList();
+}
 
   void addToCart(Food food, {int quantity = 1}) {
     // check if this food is already in the cart
@@ -41,6 +90,10 @@ class CartProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+  void clearCart() {
+  _items.clear();
+  notifyListeners();
+}
 
   double get totalPrice {
     double total = 0;

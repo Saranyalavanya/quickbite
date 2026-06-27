@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
 import 'register_screen.dart';
+import 'package:provider/provider.dart';
+import 'user_provider.dart';
+import 'forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -114,7 +117,10 @@ Align(
   alignment: Alignment.centerRight,
   child: TextButton(
   onPressed: () {
-      // forgot password logic placeholder - not connected for now
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+      );
     },
     child: const Text('Forgot Password?'),
   ),
@@ -130,14 +136,25 @@ ElevatedButton(
     ),
   ),
   onPressed: () {
-    if (_formKey.currentState!.validate()) {
-      // all fields are valid - login logic will go here later
-      Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(builder: (context) => const HomePage()),
-    );
+  if (_formKey.currentState!.validate()) {
+    final error = context.read<UserProvider>().login(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
+
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      return;
     }
-  },
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  }
+},
   child: const Text(
     'Login',
     style: TextStyle(fontSize: 16, color: Colors.white),

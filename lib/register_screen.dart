@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'user_provider.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -141,13 +144,30 @@ ElevatedButton(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
   ),
   onPressed: () {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pop(context);
+  if (_formKey.currentState!.validate()) {
+    final userProvider = context.read<UserProvider>();
+    final email = _emailController.text.trim();
+
+    if (userProvider.isEmailTaken(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Account created! Please log in.')),
+        const SnackBar(content: Text('This email is already registered.')),
       );
+      return;
     }
-  },
+
+    userProvider.registerUser(
+      name: _nameController.text.trim(),
+      email: email,
+      phone: _phoneController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Account created! Please log in.')),
+    );
+  }
+},
   child: const Text(
     'Register',
     style: TextStyle(fontSize: 16, color: Colors.white),
